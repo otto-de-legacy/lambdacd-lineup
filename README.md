@@ -1,4 +1,4 @@
-# lambdacd-lineup
+# LambdaCD-Lineup
 
 With LambdaCD-Lineup you can take and compare screenshots of multiple urls in your pipeline. This is very helpful if you have a webservice and you want to ensure that changes do not affect the GUI.
 
