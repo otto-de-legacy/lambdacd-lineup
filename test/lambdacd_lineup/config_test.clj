@@ -64,6 +64,18 @@
   (testing "resolutions: same resolution twice is invalid"
     (let [cfg {:base-url "otto.de" :resolutions [800, 1200, 800]}]
       (is (not (first (validate cfg))))))
+  (testing "browser: valid firefox"
+    (let [cfg {:base-url "otto.de"
+               :browser :firefox}]
+      (is (first (validate cfg)))))
+  (testing "browser: valid phantomjs"
+    (let [cfg {:base-url "otto.de"
+               :browser :phantomjs}]
+      (is (first (validate cfg)))))
+  (testing "browser: invalid string"
+    (let [cfg {:base-url "otto.de"
+               :browser "phantomjs"}]
+      (is (not (first (validate cfg))))))
   (testing "protocol: valid protocol http"
     (let [cfg {:base-url "otto.de"
                :protocol "http"}]

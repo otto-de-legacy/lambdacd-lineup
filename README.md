@@ -19,6 +19,7 @@ Both must exist in any directory in your $PATH.
           lineup-cfg {:base-url    "otto.de"
                       :urls        ["/sport", "/media"]
                       :resolutions [600, 800, 1200]
+                      :browser     :firefox
                       :protocol    "https"}
         config {:lineup-cfg                         lineup-cfg
                 :home-dir                           home-dir
@@ -45,11 +46,13 @@ The LambdaCD-Artifacts plugin needs this path to serve your screenshots.
 ```
 lineup-cfg {:base-url    "otto.de"
             :urls        ["sport", "media"]
+            :browser     :firefox
             :resolutions [600, 800, 1200]
             :protocol    "https"}
 ```
 * base-url: Url of your website without subdomain (www, dev, live, ...) (no default)
 * urls: Path to subsites. base-url + urls = otto.de/sport, otto.de/media (default: "")
+* browser: :firefox or :phantomjs (default: :firefox)
 * resolution: Width of the screenshots (default: 1200)
 * protocol: https or http (default: https)
 

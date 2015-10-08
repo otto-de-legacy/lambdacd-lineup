@@ -25,6 +25,7 @@
         lineup-cfg {:base-url    "otto.de"
                     :urls        ["sport", "media"]
                     :resolutions [600, 800, 1200]
+                    :browser     :firefox
                     :protocol    "https"}
         config {:lineup-cfg               lineup-cfg
                 :home-dir                 home-dir

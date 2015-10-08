@@ -5,6 +5,7 @@ lineup.resolutions(ARGV[3])
 lineup.urls(ARGV[4])
 lineup.filepath_for_images(ARGV[5])
 lineup.difference_path(ARGV[5])
+lineup.use_phantomjs(ARGV[6])
 
 lineup.record_screenshot('after')
 

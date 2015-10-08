@@ -16,6 +16,8 @@
           urls-as-string (s/join "," urls)
           resolutions (or (:resolutions lineup-cfg) 1200)
           resolutions-as-string (s/join "," resolutions)
+          browser (or (:browser lineup-cfg) :firefox)
+          browser-as-bool (= :phantomjs browser)
           dir (str "screenshots/" build-number "-" sub-domain)
           cfg-validation-result (config/validate lineup-cfg)]
       (if (not (first cfg-validation-result))
@@ -33,7 +35,8 @@
                          base-url
                          resolutions-as-string
                          urls-as-string
-                         dir])))))))
+                         dir
+                         browser-as-bool])))))))
 
 (defn take-screenshots
   ([] (take-screenshots "www"))
