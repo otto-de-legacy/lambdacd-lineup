@@ -11,4 +11,4 @@ lineup.record_screenshot('after')
 
 lineup.compare('before', 'after')
 
-lineup.save_json(ARGV[5])
+lineup.save_json(ARGV[5] == "true")
