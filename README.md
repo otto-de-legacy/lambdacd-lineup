@@ -1,13 +1,13 @@
 # lambdacd-lineup
 
-With Lambdacd-Lineup you can take and compare screenshots of multiple urls in your pipeline. This is very helpfull if you have a webservice and you want to ensure that changes do not affect the GUI.
+With Lambdacd-Lineup you can take and compare screenshots of multiple urls in your pipeline. This is very helpful if you have a webservice and you want to ensure that changes do not affect the GUI.
 
 Check out [Lineup](https://github.com/otto-de/lineup) to get more information about this project.
-Lambdacd-Lineup is just a wrapper to integrate this tool in lambdacd.
+Lambdacd-Lineup is just a wrapper to integrate this tool in LambdaCD.
 
 ## Requirements
 * Ruby
-* PhantomJS
+* PhantomJS or headless Firefox
 
 Both must exist in any directory in your $PATH.
 ## Usage
@@ -17,13 +17,13 @@ Both must exist in any directory in your $PATH.
   (let [home-dir (util/create-temp-dir)
           artifacts-path-context "/artifacts"
           lineup-cfg {:base-url    "otto.de"
-                               :urls        ["/sport", "/media"]
-                               :resolutions [600, 800, 1200]
-                               :protocol    "https"}
+                      :urls        ["/sport", "/media"]
+                      :resolutions [600, 800, 1200]
+                      :protocol    "https"}
         config {:lineup-cfg                         lineup-cfg
-                      :home-dir                           home-dir
-                      :dont-wait-for-completion false
-                      :artifacts-path-context      artifacts-path-context}
+                :home-dir                           home-dir
+                :dont-wait-for-completion           false
+                :artifacts-path-context             artifacts-path-context}
         pipeline (lambdacd.core/assemble-pipeline pipeline-def config)
         app (ui/ui-for pipeline)]
     (log/info "LambdaCD Home Directory is " home-dir)
@@ -44,9 +44,9 @@ The Lambdacd-Artifacts plugin needs this path to serve your screenshots.
 ### Define the lambdacd-lineup config
 ```
 lineup-cfg {:base-url    "otto.de"
-                    :urls        ["sport", "media"]
-                    :resolutions [600, 800, 1200]
-                    :protocol    "https"}
+            :urls        ["sport", "media"]
+            :resolutions [600, 800, 1200]
+            :protocol    "https"}
 ```
 * base-url: Url of your website without subdomain (www, dev, live, ...) (no default)
 * urls: Path to subsites. base-url + urls = otto.de/sport, otto.de/media (default: "")
@@ -58,8 +58,8 @@ Add your lineup config and the artifacts-path-context to the lambdacd config.
 
 ```
 config {:lineup-cfg               lineup-cfg
-              :artifacts-path-context   artifacts-path-context
-              [...]}
+        :artifacts-path-context   artifacts-path-context
+        [...]}
 ```
 ### Add Lambdacd-Lineup steps to your pipeline
 ```clojure
@@ -94,6 +94,7 @@ Parameter:
 
 You will see the images if you click on this step:
 ![ScreenShot](/doc/images/lambdacd-lineup-1.png)
+
 ![ScreenShot](/doc/images/lambdacd-lineup-2.png)
 
 ## License
