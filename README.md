@@ -76,8 +76,10 @@ config {:lineup-cfg               lineup-cfg
 
 ### take-screenshots
 Execute this step before you deploy your changes.
+
 Parameters:
 * sub-domain: develop, live, ... (default: www)
+
 ### compare-with-screenshots
 Execute this step after you deploy your changes.
 
@@ -85,6 +87,7 @@ This step compares the current version of your website with the screenshots take
 
 Parameters:
 * sub-domain: develop, live, ... (default: www)
+
 ### analyse-comparison
 Execute this step after you compare the versions.
 
@@ -92,7 +95,8 @@ Parameter:
 * threshold: This step will fail if the difference between your versions is higher than this value (no default)
 * sub-domain: develop, live, ... (default: www)
 
-You will see the images if you click on this step:
+You can see the screenshots if you click on this step:
+
 ![ScreenShot](/doc/images/lambdacd-lineup-1.png)
 
 ![ScreenShot](/doc/images/lambdacd-lineup-2.png)
