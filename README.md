@@ -1,9 +1,9 @@
 # lambdacd-lineup
 
-With Lambdacd-Lineup you can take and compare screenshots of multiple urls in your pipeline. This is very helpful if you have a webservice and you want to ensure that changes do not affect the GUI.
+With LambdaCD-Lineup you can take and compare screenshots of multiple urls in your pipeline. This is very helpful if you have a webservice and you want to ensure that changes do not affect the GUI.
 
 Check out [Lineup](https://github.com/otto-de/lineup) to get more information about this project.
-Lambdacd-Lineup is just a wrapper to integrate this tool in LambdaCD.
+LambdaCD-Lineup is just a wrapper to integrate this tool in LambdaCD.
 
 ## Requirements
 * Ruby
@@ -39,9 +39,9 @@ Both must exist in any directory in your $PATH.
 ```
 artifacts-path-context "/artifacts"
 ```
-The Lambdacd-Artifacts plugin needs this path to serve your screenshots.
+The LambdaCD-Artifacts plugin needs this path to serve your screenshots.
 
-### Define the lambdacd-lineup config
+### Define your LambdaCD-Lineup config
 ```
 lineup-cfg {:base-url    "otto.de"
             :urls        ["sport", "media"]
@@ -53,15 +53,15 @@ lineup-cfg {:base-url    "otto.de"
 * resolution: Width of the screenshots (default: 1200)
 * protocol: https or http (default: https)
 
-### Lambdacd config
-Add your lineup config and the artifacts-path-context to the lambdacd config.
+### LambdaCD config
+Add your lineup config and the artifacts-path-context to the LambdaCD config.
 
 ```
 config {:lineup-cfg               lineup-cfg
         :artifacts-path-context   artifacts-path-context
         [...]}
 ```
-### Add Lambdacd-Lineup steps to your pipeline
+### Add LambdaCD-Lineup steps to your pipeline
 ```clojure
 (def pipeline-def
   `(
