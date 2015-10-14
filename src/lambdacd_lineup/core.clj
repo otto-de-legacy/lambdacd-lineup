@@ -18,6 +18,7 @@
           resolutions-as-string (s/join "," resolutions)
           browser (or (:browser lineup-cfg) :firefox)
           browser-as-bool (= :phantomjs browser)
+          async-wait (or (:async-wait lineup-cfg) "5")
           dir (str "screenshots/" build-number "-" sub-domain)
           cfg-validation-result (config/validate lineup-cfg)]
       (if (not (first cfg-validation-result))
@@ -36,7 +37,8 @@
                          resolutions-as-string
                          urls-as-string
                          dir
-                         browser-as-bool])))))))
+                         browser-as-bool
+                         async-wait])))))))
 
 (defn take-screenshots
   ([] (take-screenshots "www"))
