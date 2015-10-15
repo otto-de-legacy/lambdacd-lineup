@@ -35,6 +35,18 @@
               (or (nil? s)
                   (= (count (distinct s)) (count s))))
 
+(defvalidator is-positive?
+              {:default-message-format "%s must be a positve number"}
+              [s]
+              (or (nil? s)
+                  (and (number? s) (pos? s))))
+
+(defvalidator is-integer?
+              {:default-message-format "%s must be a integer"}
+              [s]
+              (or (nil? s)
+                  (and (number? s) (integer? s))))
+
 (defvalidator is-firefox-or-phantomjs?
               {:default-message-format "%s must be :firefox or :phantomjs"}
               [s]
@@ -47,6 +59,7 @@
                                       :urls [is-vector? no-duplicate-entries? [v/every without-leading-slash?]]
                                       :resolutions [is-vector? no-duplicate-entries? [v/every v/number]]
                                       :browser [is-firefox-or-phantomjs?]
+                                      :async-wait [is-positive? is-integer?]
                                       :protocol http-or-https?))]
     (if (nil? val-result)
       [true nil]

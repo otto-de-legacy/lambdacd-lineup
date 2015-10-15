@@ -76,6 +76,26 @@
     (let [cfg {:base-url "otto.de"
                :browser "phantomjs"}]
       (is (not (first (validate cfg))))))
+  (testing "async-wait: valid value"
+    (let [cfg {:base-url "otto.de"
+               :async-wait 3}]
+      (is (first (validate cfg)))))
+  (testing "async-wait: invalid negative value"
+    (let [cfg {:base-url "otto.de"
+               :async-wait -3}]
+      (is (not (first (validate cfg))))))
+  (testing "async-wait: invalid positive float value"
+    (let [cfg {:base-url "otto.de"
+               :async-wait 4.3}]
+      (is (not (first (validate cfg))))))
+  (testing "async-wait: invalid string value"
+    (let [cfg {:base-url "otto.de"
+               :async-wait "4"}]
+      (is (not (first (validate cfg))))))
+  (testing "async-wait: invalid vector value"
+    (let [cfg {:base-url "otto.de"
+               :async-wait [4,5]}]
+      (is (not (first (validate cfg))))))
   (testing "protocol: valid protocol http"
     (let [cfg {:base-url "otto.de"
                :protocol "http"}]
