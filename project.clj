@@ -1,4 +1,4 @@
-(defproject lambdacd-lineup "0.2.1"
+(defproject lambdacd-lineup "0.2.2"
   :description "FIXME: write description"
   :url "http://example.com/FIXME"
   :license {:name "The MIT License (MIT)"

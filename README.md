@@ -16,11 +16,12 @@ Both must exist in any directory in your $PATH.
 (defn -main [& args]
   (let [home-dir (util/create-temp-dir)
           artifacts-path-context "/artifacts"
-          lineup-cfg {:base-url    "otto.de"
-                      :urls        ["/sport", "/media"]
-                      :resolutions [600, 800, 1200]
-                      :browser     :firefox
-                      :protocol    "https"}
+          lineup-cfg {:base-url        "otto.de"
+                      :urls            ["sport", "media"]
+                      :resolutions     [600, 800, 1200]
+                      :browser         :firefox
+                      :async-wait-time 3
+                      :protocol        "https"}
         config {:lineup-cfg                         lineup-cfg
                 :home-dir                           home-dir
                 :dont-wait-for-completion           false
@@ -44,16 +45,18 @@ The LambdaCD-Artifacts plugin needs this path to serve your screenshots.
 
 ### Define your LambdaCD-Lineup config
 ```
-lineup-cfg {:base-url    "otto.de"
-            :urls        ["sport", "media"]
-            :browser     :firefox
-            :resolutions [600, 800, 1200]
-            :protocol    "https"}
+lineup-cfg {:base-url        "otto.de"
+            :urls            ["sport", "media"]
+            :resolutions     [600, 800, 1200]
+            :browser         :firefox
+            :async-wait-time 3
+            :protocol        "https"}
 ```
 * base-url: Url of your website without subdomain (www, dev, live, ...) (no default)
-* urls: Path to subsites. base-url + urls = otto.de/sport, otto.de/media (default: "")
-* browser: :firefox or :phantomjs (default: :firefox)
+* urls: Path to subsites. base-url + "/" + urls = otto.de/sport, otto.de/media (default: "")
 * resolution: Width of the screenshots (default: 1200)
+* browser: :firefox or :phantomjs (default: :firefox)
+* async-wait: Time to wait in seconds between rendering the page and taking the screenshots. Useful to load resources (fonts,...) asynchronously (default: 5)
 * protocol: https or http (default: https)
 
 ### LambdaCD config
