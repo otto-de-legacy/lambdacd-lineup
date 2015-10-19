@@ -42,16 +42,19 @@
                          async-wait-as-string])))))))
 
 (defn take-screenshots
+  {:meta-step true}
   ([] (take-screenshots "www"))
   ([sub-domain]
    (execute-lineup-script sub-domain "lineup_screenshot.rb")))
 
 (defn compare-with-screenshots
+  {:meta-step true}
   ([] (compare-with-screenshots "www"))
   ([sub-domain]
    (execute-lineup-script sub-domain "lineup_compare.rb")))
 
 (defn analyse-comparison
+  {:meta-step true}
   ([threshold]
    (analyse-comparison threshold "www"))
   ([threshold sub-domain]
