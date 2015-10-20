@@ -1,5 +1,8 @@
 require 'lineup'
 
+ARGV.each do|a|
+  puts "Argument: #{a}"
+end
 lineup = Lineup::Screenshot.new(ARGV[0] + '://' + ARGV[1] + '.' + ARGV[2])
 lineup.resolutions(ARGV[3])
 lineup.urls(ARGV[4])

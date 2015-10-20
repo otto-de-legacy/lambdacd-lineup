@@ -5,7 +5,8 @@
             [lambdacd-lineup.config :as config]
             [lambdacd.util :as util]
             [lambdacd-lineup.io :as io]
-            [clojure.string :as s]))
+            [clojure.string :as s]
+            [clojure.core.strint :as strint]))
 
 (defn execute-lineup-script [sub-domain script-name]
   (fn [_ {build-number :build-number {home-dir :home-dir lineup-cfg :lineup-cfg} :config :as ctx}]
@@ -20,7 +21,7 @@
           browser-as-bool (= :phantomjs browser)
           async-wait (or (:async-wait lineup-cfg) 5)
           async-wait-as-string (str async-wait)
-          dir (str "screenshots/" build-number "-" sub-domain)
+          dir (str home-dir "/screenshots/" build-number "-" sub-domain)
           cfg-validation-result (config/validate lineup-cfg)]
       (if (not (first cfg-validation-result))
         (do
@@ -31,15 +32,9 @@
           (shell/bash
             ctx
             home-dir
-            (s/join " " [(str "ruby lineup/" script-name)
-                         protocol
-                         sub-domain
-                         base-url
-                         resolutions-as-string
-                         urls-as-string
-                         dir
-                         browser-as-bool
-                         async-wait-as-string])))))))
+            (strint/<< "ruby lineup/~{script-name} \"~{protocol}\" \"~{sub-domain}\" \"~{base-url}\" \"~{resolutions-as-string}\" \"~{urls-as-string}\" \"~{dir}\" \"~{browser-as-bool}\" \"~{async-wait-as-string}\"")))))))
+
+;(s/<< "bash deploy_mesos.sh \"~{id}\" \"~{username}\" \"~{password}\" \"~{team-marathon}\"")
 
 (defn take-screenshots
   {:meta-step true}

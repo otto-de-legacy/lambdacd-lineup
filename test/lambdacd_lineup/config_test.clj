@@ -14,31 +14,31 @@
     (let [cfg {:base-url "otto.de/"}]
       (is (not (first (validate cfg))))))
   (testing "urls: valid vector"
-    (let [cfg {:base-url "otto.de" :urls ["sport"]}]
+    (let [cfg {:base-url "otto.de" :urls ["/sport"]}]
       (is (first (validate cfg)))))
-  (testing "urls: valid empty vector"
-    (let [cfg {:base-url "otto.de" :urls []}]
+  (testing "urls: valid slash vector"
+    (let [cfg {:base-url "otto.de" :urls ["/"]}]
       (is (first (validate cfg)))))
-  (testing "urls: valid vector with empty string"
+  (testing "urls: invalid vector with empty string"
     (let [cfg {:base-url "otto.de" :urls [""]}]
-      (is (first (validate cfg)))))
-  (testing "urls: valid vector with empty string"
-    (let [cfg {:base-url "otto.de" :urls ["sport", "media"]}]
+      (is (not (first (validate cfg))))))
+  (testing "urls: two valid strings"
+    (let [cfg {:base-url "otto.de" :urls ["/sport", "/media"]}]
       (is (first (validate cfg)))))
   (testing "urls: only a empty string invalid"
     (let [cfg {:base-url "otto.de" :urls ""}]
       (is (not (first (validate cfg))))))
   (testing "urls: a list is invalid"
-    (let [cfg {:base-url "otto.de" :urls '("sport" "media")}]
+    (let [cfg {:base-url "otto.de" :urls '("/sport" "/media")}]
       (is (not (first (validate cfg))))))
   (testing "urls: same url twice is invalid"
-    (let [cfg {:base-url "otto.de" :urls ["sport", "sport"]}]
+    (let [cfg {:base-url "otto.de" :urls ["/sport", "/sport"]}]
       (is (not (first (validate cfg))))))
-  (testing "urls: a leading slash is invalid"
+  (testing "urls: without leading slash is invalid"
     (let [cfg {:base-url "otto.de" :urls ["sport", "/media"]}]
       (is (not (first (validate cfg))))))
   (testing "urls: a trailing slash is valid"
-    (let [cfg {:base-url "otto.de" :urls ["sport/"]}]
+    (let [cfg {:base-url "otto.de" :urls ["/sport/"]}]
       (is (first (validate cfg)))))
   (testing "resolutions: valid empty vector"
     (let [cfg {:base-url "otto.de" :resolutions []}]

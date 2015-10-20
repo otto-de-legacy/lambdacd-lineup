@@ -11,6 +11,12 @@
               (or (nil? s)
                   (nil? (re-find #"^/.*$" s))))
 
+(defvalidator with-leading-slash?
+              {:default-message-format "%s has to start with a slash"}
+              [s]
+              (or (nil? s)
+                  (not (nil? (re-find #"^/.*$" s)))))
+
 (defvalidator without-trailing-slash?
               {:default-message-format "%s must not end with a slash"}
               [s]
@@ -56,7 +62,7 @@
 (defn validate [cfg]
   (let [val-result (first (b/validate cfg
                                       :base-url [v/required without-leading-slash? without-trailing-slash?]
-                                      :urls [is-vector? no-duplicate-entries? [v/every without-leading-slash?]]
+                                      :urls [is-vector? no-duplicate-entries? [v/every with-leading-slash?]]
                                       :resolutions [is-vector? no-duplicate-entries? [v/every v/number]]
                                       :browser [is-firefox-or-phantomjs?]
                                       :async-wait [is-positive? is-integer?]
