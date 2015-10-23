@@ -27,7 +27,15 @@
 (defn -main [& args]
   (let [home-dir (util/create-temp-dir)
         artifacts-path-context "/artifacts"
-        lineup-cfg (io/load-config-file "lineup.json")
+        lineup-cfg {"urls"        {
+                                   "https://#env#.otto.de" {
+                                                            "paths"       ["/" "multimedia"]
+                                                            "max-diff"    2
+                                                            "env-mapping" {"live" "www"}}
+                                   }
+                    "browser"     :firefox
+                    "resolutions" [600 800]
+                    }
         config {:lineup-cfg               lineup-cfg
                 :home-dir                 home-dir
                 :dont-wait-for-completion false
