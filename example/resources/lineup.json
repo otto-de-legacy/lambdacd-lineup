@@ -1,0 +1,19 @@
+{
+  "urls": {
+    "https://#env#.otto.de": {
+      "paths": [
+        "/",
+        "/multimedia"
+      ],
+      "max-diff": 2,
+      "env-mapping": {
+        "live": "www"
+      }
+    }
+  },
+  "browser": "firefox",
+  "resolutions": [
+    600,
+    800
+  ]
+}

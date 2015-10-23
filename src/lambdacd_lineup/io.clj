@@ -1,5 +1,6 @@
 (ns lambdacd-lineup.io
-  (:require [clojure.java.io :as io])
+  (:require [clojure.java.io :as io]
+            [cheshire.core :as cheshire])
   (:import (java.io File)))
 
 (defn ensure-dir [parent dirname]
@@ -12,3 +13,9 @@
         out-filename (str dir "/" res-file-name)]
     (with-open [in (io/input-stream (io/resource resource-name))]
       (io/copy in (io/file out-filename)))))
+
+(defn- browser-val-to-keyword [m]
+  (update-in m ["browser"] keyword))
+
+(defn load-config-file [resource-name]
+  (browser-val-to-keyword (cheshire/parse-string (slurp (io/resource resource-name)))))

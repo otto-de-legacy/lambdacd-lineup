@@ -8,7 +8,8 @@
     [clojure.tools.logging :as log]
     [compojure.core :refer :all]
     [lambdacd-artifacts.core :as artifacts]
-    [lambdacd-lineup.core :as lineup])
+    [lambdacd-lineup.core :as lineup]
+    [lambdacd-lineup.io :as io])
   (:gen-class))
 
 (def pipeline-def
@@ -16,17 +17,17 @@
      wait-for-manual-trigger
      (lineup/take-screenshots "develop")
      (lineup/compare-with-screenshots "develop")
-     (lineup/analyse-comparison 10 "develop")
+     (lineup/analyse-comparison "develop")
+     wait-for-manual-trigger
+     (lineup/take-screenshots "live")
+     (lineup/compare-with-screenshots "live")
+     (lineup/analyse-comparison "live")
      ))
 
 (defn -main [& args]
   (let [home-dir (util/create-temp-dir)
         artifacts-path-context "/artifacts"
-        lineup-cfg {:base-url    "otto.de"
-                    :urls        ["sport", "media"]
-                    :resolutions [600, 800, 1200]
-                    :browser     :firefox
-                    :protocol    "https"}
+        lineup-cfg (io/load-config-file "lineup.json")
         config {:lineup-cfg               lineup-cfg
                 :home-dir                 home-dir
                 :dont-wait-for-completion false

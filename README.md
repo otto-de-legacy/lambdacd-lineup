@@ -16,12 +16,7 @@ Both must exist in any directory in your $PATH.
 (defn -main [& args]
   (let [home-dir (util/create-temp-dir)
           artifacts-path-context "/artifacts"
-          lineup-cfg {:base-url        "otto.de"
-                      :urls            ["sport", "media"]
-                      :resolutions     [600, 800, 1200]
-                      :browser         :firefox
-                      :async-wait-time 3
-                      :protocol        "https"}
+          lineup-cfg (lambdacd-lineup.io/load-config-file "lineup.json")
         config {:lineup-cfg                         lineup-cfg
                 :home-dir                           home-dir
                 :dont-wait-for-completion           false
@@ -44,20 +39,36 @@ artifacts-path-context "/artifacts"
 The LambdaCD-Artifacts plugin needs this path to serve your screenshots.
 
 ### Define your LambdaCD-Lineup config
+```javascript
+{
+  "urls": {
+    "https://#env#.otto.de": {
+      "paths": [
+        "/",
+        "multimedia"
+      ],
+      "max-diff": 2,
+      "env-mapping": {
+        "live": "www"
+      }
+    }
+  },
+  "browser": "firefox",
+  "async-wait": 10,
+  "resolutions": [
+    600,
+    800
+  ]
+}
 ```
-lineup-cfg {:base-url        "otto.de"
-            :urls            ["sport", "media"]
-            :resolutions     [600, 800, 1200]
-            :browser         :firefox
-            :async-wait-time 3
-            :protocol        "https"}
-```
-* base-url: Url of your website without subdomain (www, dev, live, ...) (no default)
-* urls: Path to subsites. base-url + "/" + urls = otto.de/sport, otto.de/media (default: "")
+* urls: Map of urls on configs (no default)
+  * Key: URL without path (no defualt). A placehoder #env# can be used to inject a environment.
+  * Value:
+    * paths: Path to subsites. URL + "/" + paths = otto.de/sport, otto.de/media (default: "")
+    * max-diff: max difference between two screenshots (before and after)
 * resolution: Width of the screenshots (default: 1200)
 * browser: :firefox or :phantomjs (default: :firefox)
 * async-wait: Time to wait in seconds between rendering the page and taking the screenshots. Useful to load resources (fonts,...) asynchronously (default: 5)
-* protocol: https or http (default: https)
 
 ### LambdaCD config
 Add your lineup config and the artifacts-path-context to the LambdaCD config.
@@ -75,7 +86,7 @@ config {:lineup-cfg               lineup-cfg
      (lineup/take-screenshots "develop")
      deploy-my-app
      (lineup/compare-with-screenshots "develop")
-     (lineup/analyse-comparison 10 "develop")
+     (lineup/analyse-comparison "develop")
      [...]
      ))
 ```
@@ -84,22 +95,25 @@ config {:lineup-cfg               lineup-cfg
 Execute this step before you deploy your changes.
 
 Parameters:
-* sub-domain: develop, live, ... (default: www)
+* environment: develop, live, ... (default: www)
 
+  Will be used in your base-url instead of placeholder #env#
 ### compare-with-screenshots
 Execute this step after you deploy your changes.
 
 This step compares the current version of your website with the screenshots taken in the step 'take-screenshots'.
 
 Parameters:
-* sub-domain: develop, live, ... (default: www)
+* environment: develop, live, ... (default: www)
 
+  Will be used in your base-url instead of placeholder #env#
 ### analyse-comparison
 Execute this step after you compare the versions.
 
 Parameter:
-* threshold: This step will fail if the difference between your versions is higher than this value (no default)
-* sub-domain: develop, live, ... (default: www)
+* environment: develop, live, ... (default: www)
+
+  Will be used in your base-url instead of placeholder #env#
 
 You can see the screenshots if you click on this step:
 

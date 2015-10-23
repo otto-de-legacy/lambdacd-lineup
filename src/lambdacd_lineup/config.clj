@@ -9,6 +9,7 @@
               {:default-message-format "%s must not start with a slash"}
               [s]
               (or (nil? s)
+                  (= "/" s)
                   (nil? (re-find #"^/.*$" s))))
 
 (defvalidator with-leading-slash?
@@ -27,7 +28,7 @@
               {:default-message-format "%s must be http or https"}
               [s]
               (or (nil? s)
-                  (not (nil? (re-find #"^https?$" s)))))
+                  (not (nil? (re-find #"^https?.*$" (key s))))))
 
 (defvalidator is-vector?
               {:default-message-format "%s must be a vector"}
@@ -35,7 +36,24 @@
               (or (nil? s)
                   (instance? clojure.lang.APersistentVector s)))
 
-(defvalidator no-duplicate-entries?
+(defvalidator not-empty?
+              {:default-message-format "%s must not be empty"}
+              [s]
+              (not (empty? s)))
+
+(defvalidator is-map?
+              {:default-message-format "%s must be a map"}
+              [s]
+              (or (nil? s)
+                  (instance? clojure.lang.APersistentMap s)))
+
+(defvalidator no-duplicate-entries-in-map?
+              {:default-message-format "%s must not have duplicate entries"}
+              [s]
+              (or (nil? s)
+                  (= (count (distinct (keys s))) (count (keys s)))))
+
+(defvalidator no-duplicate-entries-in-vector?
               {:default-message-format "%s must not have duplicate entries"}
               [s]
               (or (nil? s)
@@ -45,13 +63,19 @@
               {:default-message-format "%s must be a positve number"}
               [s]
               (or (nil? s)
-                  (and (number? s) (pos? s))))
+                  (and (number? s) (or (pos? s) (= 0.0 (float s))))))
 
 (defvalidator is-integer?
               {:default-message-format "%s must be a integer"}
               [s]
               (or (nil? s)
                   (and (number? s) (integer? s))))
+
+(defvalidator is-float?
+              {:default-message-format "%s must be a integer"}
+              [s]
+              (or (nil? s)
+                  (and (number? s) (or (integer? s) (float? s)))))
 
 (defvalidator is-firefox-or-phantomjs?
               {:default-message-format "%s must be :firefox or :phantomjs"}
@@ -61,12 +85,18 @@
 
 (defn validate [cfg]
   (let [val-result (first (b/validate cfg
-                                      :base-url [v/required without-leading-slash? without-trailing-slash?]
-                                      :urls [is-vector? no-duplicate-entries? [v/every with-leading-slash?]]
-                                      :resolutions [is-vector? no-duplicate-entries? [v/every v/number]]
-                                      :browser [is-firefox-or-phantomjs?]
-                                      :async-wait [is-positive? is-integer?]
-                                      :protocol http-or-https?))]
+                                      "urls" [is-map?
+                                              no-duplicate-entries-in-map?
+                                              [v/every http-or-https?]
+                                              [v/every #(without-trailing-slash? (key %))]
+                                              [v/every  #(b/valid? (val %) "env-mapping" [is-map? no-duplicate-entries-in-map?])]
+                                              [v/every  #(b/valid? (val %) "max-diff" [v/required is-positive? is-float?])]
+                                              [v/every  #(b/valid? (val %) "paths" [[v/every without-leading-slash?]])]
+                                              [v/every  #(b/valid? (val %) "paths" [[v/every not-empty?]])]
+                                              [v/every  #(b/valid? (val %) "paths" [v/required not-empty?])]]
+                                      "resolutions" [is-vector? no-duplicate-entries-in-vector? [v/every v/number]]
+                                      "browser" [is-firefox-or-phantomjs?]
+                                      "async-wait" [is-positive? is-integer?]))]
     (if (nil? val-result)
       [true nil]
       [false val-result])))
