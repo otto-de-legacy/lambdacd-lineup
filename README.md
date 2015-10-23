@@ -2,12 +2,15 @@
 
 With LambdaCD-Lineup you can take and compare screenshots of multiple urls in your pipeline. This is very helpful if you have a webservice and you want to ensure that changes do not affect the GUI.
 
+[![Clojars Project](http://clojars.org/lambdacd-lineup/latest-version.svg)](http://clojars.org/lambdacd-lineup)
+
 Check out [Lineup](https://github.com/otto-de/lineup) to get more information about this project.
 LambdaCD-Lineup is just a wrapper to integrate this tool in LambdaCD.
 
 ## Requirements
 * Ruby
 * PhantomJS or headless Firefox
+* [Lineup](https://github.com/otto-de/lineup)
 
 Both must exist in any directory in your $PATH.
 ## Usage
