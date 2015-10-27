@@ -87,6 +87,7 @@
   (let [val-result (first (b/validate cfg
                                       "urls" [is-map?
                                               no-duplicate-entries-in-map?
+                                              v/required
                                               [v/every http-or-https?]
                                               [v/every #(without-trailing-slash? (key %))]
                                               [v/every  #(b/valid? (val %) "env-mapping" [is-map? no-duplicate-entries-in-map?])]

@@ -8,6 +8,9 @@
   (testing "valid minimal config"
     (let [cfg {"urls" {"http://otto.de" {"paths" ["/"] "max-diff" 5}}}]
       (is (first (validate cfg)))))
+  (testing "urls: urls is required"
+    (let [cfg {"resolutions" [800, 1200]}]
+      (is (not (first (validate cfg))))))
   (testing "urls: leading slash is invalid"
     (let [cfg {"urls" {"/http://otto.de" {"paths" ["/"] "max-diff" 5}}}]
       (is (not (first (validate cfg))))))
