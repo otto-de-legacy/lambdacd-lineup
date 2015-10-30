@@ -139,7 +139,7 @@
       (assoc result :details [{:label "Artifacts", :details artifacts-list}])
       (let [env-mapping (get (val (first urls)) "env-mapping")
             url (replace-env-in-url (key (first urls)) env env-mapping)
-            url-for-dir (s/replace url #"[:/.?]+" "_")
+            url-for-dir (replace-special-chars-in-url url)
             dir (str home-dir "/screenshots/" build-number "-" url-for-dir)
             shell-result (shell/bash ctx dir (str "for f in * ; do mv \"$f\" \"" url-for-dir "_$f\" ; done"))]
         (if (= :failure (:status shell-result))
