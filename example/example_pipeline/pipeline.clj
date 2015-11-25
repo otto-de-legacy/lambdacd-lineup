@@ -17,6 +17,7 @@
      wait-for-manual-trigger
      (lineup/take-screenshots "develop")
      (lineup/compare-with-screenshots "develop")
+     wait-for-manual-trigger
      (lineup/analyse-comparison "develop")
      wait-for-manual-trigger
      (lineup/take-screenshots "live")
@@ -32,6 +33,9 @@
                                                             "paths"       ["/" "multimedia"]
                                                             "max-diff"    2
                                                             "env-mapping" {"live" "www"}}
+                                   "https://www.google.de" {
+                                                            "paths"       ["/"]
+                                                            "max-diff"    100}
                                    }
                     "browser"     :firefox
                     "resolutions" [600 800]

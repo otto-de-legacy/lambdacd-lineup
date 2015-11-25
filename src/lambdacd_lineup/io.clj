@@ -1,6 +1,8 @@
 (ns lambdacd-lineup.io
   (:require [clojure.java.io :as io]
-            [cheshire.core :as cheshire])
+            [cheshire.core :as cheshire]
+            [lambdacd-lineup.util :as util]
+            [lambdacd-artifacts.core :as artifacts])
   (:import (java.io File)))
 
 (defn ensure-dir [parent dirname]
@@ -19,3 +21,9 @@
 
 (defn load-config-file [resource-name]
   (browser-val-to-keyword (cheshire/parse-string (slurp (io/resource resource-name)))))
+
+(defn lineup-json-exists [url home-dir build-number step-id]
+  (let [dir (str home-dir "/" build-number "/" (artifacts/format-step-id step-id))
+        url-for-dir (util/replace-special-chars-in-url url)]
+    (.exists
+      (io/as-file (str dir "/" url-for-dir "_log.json")))))

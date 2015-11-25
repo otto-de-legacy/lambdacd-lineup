@@ -3,27 +3,13 @@
             [lambdacd-artifacts.core :as artifacts]
             [cheshire.core :as cheshire]
             [lambdacd-lineup.config :as config]
-            [lambdacd.util :as util]
+            [lambdacd-lineup.util :as util]
             [lambdacd-lineup.io :as io]
             [clojure.string :as s]
             [clojure.core.strint :as strint]
             [clj-http.client :as client]
             [lambdacd.steps.support :refer [new-printer print-to-output printed-output]]))
 
-
-(defn replace-env-in-url [url env env-mapping]
-  (let [env-mapped (get env-mapping env)]
-    (if (nil? env-mapped)
-      (s/replace url #"#env#" env)
-      (s/replace url #"#env#" env-mapped))))
-
-(defn replace-special-chars-in-url [url]
-  (s/replace url #"[^a-zA-Z0-9]+" "_"))
-
-(defn concat-url-and-path [url path]
-  (if (= path "/")
-    (str url path)
-    (str url "/" path)))
 
 (defn check-status-code-for-one-url [url-with-path]
   (let [status (:status (client/get url-with-path {:throw-exceptions false :ignore-unknown-host? true}))]
@@ -32,7 +18,7 @@
       [url-with-path])))
 
 (defn check-status-code [url paths]
-  (let [urls-with-paths (map #(concat-url-and-path url %1) paths)]
+  (let [urls-with-paths (map #(util/concat-url-and-path url %1) paths)]
     (reduce (fn [old url-with-path]
               (concat old (check-status-code-for-one-url url-with-path)))
             [] urls-with-paths)))
@@ -60,8 +46,8 @@
    (if (or (empty? l) (= :failure status))
      {:status status}
      (let [env-mapping (get (val (first l)) "env-mapping")
-           url (replace-env-in-url (key (first l)) env env-mapping)
-           url-for-dir (replace-special-chars-in-url url)
+           url (util/replace-env-in-url (key (first l)) env env-mapping)
+           url-for-dir (util/replace-special-chars-in-url url)
            paths (get (val (first l)) "paths")
            paths-as-string (s/join "," paths)
            resolutions (or (get cfg "resolutions") 1200)
@@ -138,8 +124,8 @@
     (if (or (empty? urls) (= :failure (:status result)))
       (assoc result :details [{:label "Artifacts", :details artifacts-list}])
       (let [env-mapping (get (val (first urls)) "env-mapping")
-            url (replace-env-in-url (key (first urls)) env env-mapping)
-            url-for-dir (replace-special-chars-in-url url)
+            url (util/replace-env-in-url (key (first urls)) env env-mapping)
+            url-for-dir (util/replace-special-chars-in-url url)
             dir (str home-dir "/screenshots/" build-number "-" url-for-dir)
             shell-result (shell/bash ctx dir (str "for f in * ; do mv \"$f\" \"" url-for-dir "_$f\" ; done"))]
         (if (= :failure (:status shell-result))
@@ -172,6 +158,13 @@
   (print-to-output ctx printer "-------------------------------------------------")
   (print-to-output ctx printer ""))
 
+(defn error-output [ctx printer url url-for-dir]
+  (print-to-output ctx printer (str "URL: " url))
+  (print-to-output ctx printer (str "Can't find " url-for-dir "_log.json"))
+  (print-to-output ctx printer "")
+  (print-to-output ctx printer "-------------------------------------------------")
+  (print-to-output ctx printer ""))
+
 (defn iterate-and-analyse-logs [{build-number :build-number step-id :step-id {home-dir :home-dir lineup-cfg :lineup-cfg} :config :as ctx} env printer]
   (loop [urls (get lineup-cfg "urls")
          result {:status :success}]
@@ -179,14 +172,17 @@
       result
       (let [dir (str home-dir "/" build-number "/" (artifacts/format-step-id step-id))
             env-mapping (get (val (first urls)) "env-mapping")
-            url (replace-env-in-url (key (first urls)) env env-mapping)
-            url-for-dir (replace-special-chars-in-url url)
-            max-diff (get (val (first urls)) "max-diff")
-            json-result (cheshire/parse-stream (clojure.java.io/reader (str dir "/" url-for-dir "_log.json")) true)
-            max-detected-diff (calc-detected-max-diff json-result)
-            new-result (calc-new-status result max-detected-diff max-diff)]
-        (analyse-output ctx printer url max-detected-diff max-diff)
-        (recur (rest urls) new-result)))))
+            url (util/replace-env-in-url (key (first urls)) env env-mapping)
+            url-for-dir (util/replace-special-chars-in-url url)
+            max-diff (get (val (first urls)) "max-diff")]
+        (if (io/lineup-json-exists url home-dir build-number step-id)
+          (let [json-result (cheshire/parse-stream (clojure.java.io/reader (str dir "/" url-for-dir "_log.json")) true)
+                max-detected-diff (calc-detected-max-diff json-result)
+                new-result (calc-new-status result max-detected-diff max-diff)]
+            (analyse-output ctx printer url max-detected-diff max-diff)
+            (recur (rest urls) new-result))
+          (do (error-output ctx printer url url-for-dir)
+              (recur (rest urls) {:status :failure})))))))
 
 (defn analyse-comparison
   {:meta-step true}
@@ -199,3 +195,4 @@
        (if (= :success (:status result))
          (assoc (iterate-and-analyse-logs ctx env printer) :details (:details result))
          result)))))
+

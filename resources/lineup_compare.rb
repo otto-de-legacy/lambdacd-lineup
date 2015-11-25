@@ -10,7 +10,11 @@ lineup.wait_for_asynchron_pages(ARGV[5].to_i)
 
 lineup.record_screenshot('after')
 
-lineup.compare('before', 'after')
+begin
+    lineup.compare('before', 'after')
+    lineup.save_json(ARGV[3])
+rescue RuntimeError => e
+    puts e
+end
 
-lineup.save_json(ARGV[3])
 

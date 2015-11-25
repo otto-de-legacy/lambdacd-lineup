@@ -1,7 +1,6 @@
 (ns lambdacd-lineup.config-test
   (:require [clojure.test :refer :all]
-            [lambdacd-lineup.config :refer :all]
-            [clojure.tools.logging :as log]))
+            [lambdacd-lineup.config :refer :all]))
 
 
 (deftest validate-test
