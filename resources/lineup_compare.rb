@@ -14,6 +14,7 @@ begin
     lineup.compare('before', 'after')
     lineup.save_json(ARGV[3])
 rescue RuntimeError => e
+    puts ARGV[0]
     puts e
 end
 
