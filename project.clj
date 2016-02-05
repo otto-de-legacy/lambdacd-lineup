@@ -7,7 +7,7 @@
         :url "https://github.com/otto-de/lambdacd-lineup"}
   :test-paths ["test", "example"]
   :dependencies [[org.clojure/clojure "1.7.0"]
-                 [lambdacd "0.5.4"]
+                 [lambdacd "0.6.1"]
                  [lambdacd-artifacts "0.1.0"]
                  [bouncer "0.3.3"]
                  [org.clojure/core.incubator "0.1.3"]
