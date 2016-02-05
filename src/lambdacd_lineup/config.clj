@@ -78,10 +78,10 @@
                   (and (number? s) (or (integer? s) (float? s)))))
 
 (defvalidator is-firefox-or-phantomjs?
-              {:default-message-format "%s must be :firefox or :phantomjs"}
+              {:default-message-format "%s must be \"firefox\" or \"phantomjs\""}
               [s]
               (or (nil? s)
-                  (contains? #{:firefox :phantomjs} s)))
+                  (contains? #{"firefox" "phantomjs"} s)))
 
 (defn validate [cfg]
   (let [val-result (first (b/validate cfg

@@ -54,8 +54,8 @@
            resolutions-as-string (s/join "," resolutions)
            async-wait (or (get cfg "async-wait") 5)
            async-wait-as-string (str async-wait)
-           browser (or (get cfg "browser") :firefox)
-           browser-as-bool (= :phantomjs browser)
+           browser (or (get cfg "browser") "firefox")
+           browser-as-bool (= "phantomjs" browser)
            dir (str home-dir "/screenshots/" build-number "-" url-for-dir)
            invalid-paths-list (check-status-code url paths)]
        (if (empty? invalid-paths-list)

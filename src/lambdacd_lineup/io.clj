@@ -16,11 +16,8 @@
     (with-open [in (io/input-stream (io/resource resource-name))]
       (io/copy in (io/file out-filename)))))
 
-(defn- browser-val-to-keyword [m]
-  (update-in m ["browser"] keyword))
-
 (defn load-config-file [resource-name]
-  (browser-val-to-keyword (cheshire/parse-string (slurp (io/resource resource-name)))))
+  (cheshire/parse-string (slurp (io/resource resource-name))))
 
 (defn lineup-json-exists [url home-dir build-number step-id]
   (let [dir (str home-dir "/" build-number "/" (artifacts/format-step-id step-id))

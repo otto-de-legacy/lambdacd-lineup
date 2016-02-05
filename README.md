@@ -70,7 +70,7 @@ The LambdaCD-Artifacts plugin needs this path to serve your screenshots.
     * paths: Path to subsites. URL + "/" + paths = otto.de/sport, otto.de/media (default: "")
     * max-diff: max difference between two screenshots (before and after)
 * resolution: Width of the screenshots (default: 1200)
-* browser: :firefox or :phantomjs (default: :firefox)
+* browser: "firefox" or "phantomjs" (default: :firefox)
 * async-wait: Time to wait in seconds between rendering the page and taking the screenshots. Useful to load resources (fonts,...) asynchronously (default: 5)
 
 ### LambdaCD config
