@@ -15,31 +15,17 @@
 (def pipeline-def
   `(
      wait-for-manual-trigger
-     (lineup/take-screenshots "develop")
-     (lineup/compare-with-screenshots "develop")
-     wait-for-manual-trigger
-     (lineup/analyse-comparison "develop")
-     wait-for-manual-trigger
      (lineup/take-screenshots "live")
-     (lineup/compare-with-screenshots "live")
-     (lineup/analyse-comparison "live")
+     (lambdacd.steps.control-flow/either
+       (lambdacd.steps.control-flow/run (lineup/compare-with-screenshots "live")
+                                        (lineup/analyse-comparison "live"))
+       wait-for-manual-trigger)
      ))
 
 (defn -main [& args]
   (let [home-dir (util/create-temp-dir)
         artifacts-path-context "/artifacts"
-        lineup-cfg {"urls"        {
-                                   "https://#env#.otto.de" {
-                                                            "paths"       ["/" "multimedia"]
-                                                            "max-diff"    2
-                                                            "env-mapping" {"live" "www"}}
-                                   "https://www.google.de" {
-                                                            "paths"       ["/"]
-                                                            "max-diff"    100}
-                                   }
-                    "browser"     :firefox
-                    "resolutions" [600 800]
-                    }
+        lineup-cfg (io/load-config-file "resources/lineup.json")
         config {:lineup-cfg               lineup-cfg
                 :home-dir                 home-dir
                 :dont-wait-for-completion false

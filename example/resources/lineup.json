@@ -3,7 +3,16 @@
     "https://#env#.otto.de": {
       "paths": [
         "/",
-        "/multimedia"
+        "multimedia"
+      ],
+      "max-diff": 2,
+      "env-mapping": {
+        "live": "www"
+      }
+    },
+    "http://#env#.ottogroup.com" : {
+      "paths": [
+        "de"
       ],
       "max-diff": 2,
       "env-mapping": {
