@@ -28,7 +28,7 @@
               {:default-message-format "%s must be http or https"}
               [s]
               (or (nil? s)
-                  (not (nil? (re-find #"^https?.*$" (key s))))))
+                  (not (nil? (re-find #"^https?.*$" s)))))
 
 (defvalidator is-vector?
               {:default-message-format "%s must be a vector"}
@@ -88,13 +88,14 @@
                                       "urls" [is-map?
                                               no-duplicate-entries-in-map?
                                               v/required
-                                              [v/every http-or-https?]
+                                              [v/every #(v/string (key %))]
+                                              [v/every #(http-or-https? (key %))]
                                               [v/every #(without-trailing-slash? (key %))]
-                                              [v/every  #(b/valid? (val %) "env-mapping" [is-map? no-duplicate-entries-in-map?])]
-                                              [v/every  #(b/valid? (val %) "max-diff" [v/required is-positive? is-float?])]
-                                              [v/every  #(b/valid? (val %) "paths" [[v/every without-leading-slash?]])]
-                                              [v/every  #(b/valid? (val %) "paths" [[v/every not-empty?]])]
-                                              [v/every  #(b/valid? (val %) "paths" [v/required not-empty?])]]
+                                              [v/every #(b/valid? (val %) "env-mapping" [is-map? no-duplicate-entries-in-map?])]
+                                              [v/every #(b/valid? (val %) "max-diff" [v/required is-positive? is-float?])]
+                                              [v/every #(b/valid? (val %) "paths" [[v/every without-leading-slash?]])]
+                                              [v/every #(b/valid? (val %) "paths" [[v/every not-empty?]])]
+                                              [v/every #(b/valid? (val %) "paths" [v/required not-empty?])]]
                                       "resolutions" [is-vector? no-duplicate-entries-in-vector? [v/every v/number]]
                                       "browser" [is-firefox-or-phantomjs?]
                                       "async-wait" [is-positive? is-integer?]))]

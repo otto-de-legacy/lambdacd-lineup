@@ -22,6 +22,9 @@
   (testing "urls: invalid empty string"
     (let [cfg {"urls" {"" {"paths" ["/"] "max-diff" 5}}}]
       (is (not (first (validate cfg))))))
+  (testing "urls: invalid keyword as key"
+    (let [cfg {"urls" {:mypath {"paths" ["/"] "max-diff" 5}}}]
+      (is (not (first (validate cfg))))))
   (testing "urls: one valid url and one invalid empty url"
     (let [cfg {"urls" {"http://www.otto.de" {"paths" ["/"] "max-diff" 5} "" {"paths" ["/"] "max-diff" 5}}}]
       (is (not (first (validate cfg))))))
