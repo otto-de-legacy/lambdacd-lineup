@@ -58,10 +58,10 @@
       (is (not (first (validate cfg))))))
 
   (testing "env-mapping: valid"
-    (let [cfg {"urls" {"http://otto.de" {"paths" ["/", "sport"] "max-diff" 5 "env-mapping" { "live" "www" }}}}]
+    (let [cfg {"urls" {"http://otto.de" {"paths" ["/", "sport"] "max-diff" 5 "env-mapping" {"live" "www"}}}}]
       (is (first (validate cfg)))))
   (testing "env-mapping: invalid vector"
-    (let [cfg {"urls" {"http://otto.de" {"paths" ["/", "sport"] "max-diff" 5 "env-mapping" [ "live" "www" ]}}}]
+    (let [cfg {"urls" {"http://otto.de" {"paths" ["/", "sport"] "max-diff" 5 "env-mapping" ["live" "www"]}}}]
       (is (not (first (validate cfg))))))
 
   (testing "max-diff: valid value"
@@ -109,35 +109,39 @@
       (is (not (first (validate cfg))))))
 
   (testing "browser: valid firefox"
-    (let [cfg {"urls" {"http://otto.de" {"paths" ["/"] "max-diff" 5}}
-               "browser" :firefox}]
+    (let [cfg {"urls"    {"http://otto.de" {"paths" ["/"] "max-diff" 5}}
+               "browser" "firefox"}]
       (is (first (validate cfg)))))
   (testing "browser: valid phantomjs"
-    (let [cfg {"urls" {"http://otto.de" {"paths" ["/"] "max-diff" 5}}
-               "browser" :phantomjs}]
+    (let [cfg {"urls"    {"http://otto.de" {"paths" ["/"] "max-diff" 5}}
+               "browser" "phantomjs"}]
       (is (first (validate cfg)))))
   (testing "browser: invalid string"
-    (let [cfg {"urls" {"http://otto.de" {"paths" ["/"] "max-diff" 5}}
-               "browser" "phantomjs"}]
+    (let [cfg {"urls"    {"http://otto.de" {"paths" ["/"] "max-diff" 5}}
+               "browser" "chrome"}]
+      (is (not (first (validate cfg))))))
+  (testing "browser: keyword is invalid"
+    (let [cfg {"urls"    {"http://otto.de" {"paths" ["/"] "max-diff" 5}}
+               "browser" :firefox}]
       (is (not (first (validate cfg))))))
 
   (testing "async-wait: valid value"
-    (let [cfg {"urls" {"http://otto.de" {"paths" ["/"] "max-diff" 5}}
+    (let [cfg {"urls"       {"http://otto.de" {"paths" ["/"] "max-diff" 5}}
                "async-wait" 3}]
       (is (first (validate cfg)))))
   (testing "async-wait: invalid negative value"
-    (let [cfg {"urls" {"http://otto.de" {"paths" ["/"] "max-diff" 5}}
+    (let [cfg {"urls"       {"http://otto.de" {"paths" ["/"] "max-diff" 5}}
                "async-wait" -3}]
       (is (not (first (validate cfg))))))
   (testing "async-wait: invalid positive float value"
-    (let [cfg {"urls" {"http://otto.de" {"paths" ["/"] "max-diff" 5}}
+    (let [cfg {"urls"       {"http://otto.de" {"paths" ["/"] "max-diff" 5}}
                "async-wait" 4.3}]
       (is (not (first (validate cfg))))))
   (testing "async-wait: invalid string value"
-    (let [cfg {"urls" {"http://otto.de" {"paths" ["/"] "max-diff" 5}}
+    (let [cfg {"urls"       {"http://otto.de" {"paths" ["/"] "max-diff" 5}}
                "async-wait" "4"}]
       (is (not (first (validate cfg))))))
   (testing "async-wait: invalid vector value"
-    (let [cfg {"urls" {"http://otto.de" {"paths" ["/"] "max-diff" 5}}
-               "async-wait" [4,5]}]
+    (let [cfg {"urls"       {"http://otto.de" {"paths" ["/"] "max-diff" 5}}
+               "async-wait" [4, 5]}]
       (is (not (first (validate cfg)))))))
