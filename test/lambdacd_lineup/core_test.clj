@@ -13,6 +13,20 @@
     (is (= ["https://www.ghgsdfhksfhks.de/damenmode"]
            (check-status-code-for-one-url "https://www.ghgsdfhksfhks.de/damenmode")))))
 
+(deftest get-domain-from-url-test
+  (testing "valid url: otto.de with http"
+    (is (= ".otto.de"
+           (get-domain-from-url "http://www.otto.de"))))
+  (testing "valid url: otto.de with https"
+    (is (= ".otto.de"
+           (get-domain-from-url "https://www.otto.de"))))
+  (testing "valid url: otto.de with http and port"
+    (is (= ".otto.de"
+           (get-domain-from-url "http://www.otto.de:80"))))
+  (testing "valid url: otto.de with subdomain"
+    (is (= ".otto.de"
+           (get-domain-from-url "http://x.y.otto.de")))))
+
 (deftest check-status-code-test
   (testing "3 valid paths"
     (is (empty?

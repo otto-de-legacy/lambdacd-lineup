@@ -6,6 +6,10 @@
         "multimedia"
       ],
       "max-diff": 2,
+      "cookie": {
+        "name" : "enableAwesomeFeature",
+        "value" : "true"
+      },
       "env-mapping": {
         "live": "www"
       }

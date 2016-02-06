@@ -23,10 +23,17 @@
               (concat old (check-status-code-for-one-url url-with-path)))
             [] urls-with-paths)))
 
-(defn take-screenshots-output [ctx printer url paths resolutions]
+(defn take-screenshots-output [ctx printer url paths resolutions is-cookie-set cookie]
   (print-to-output ctx printer (str "URL: " url))
   (print-to-output ctx printer (str "Paths: " paths))
   (print-to-output ctx printer (str "Resolutions: " resolutions))
+  (when is-cookie-set
+    (print-to-output ctx printer (str "Cookie: "
+                                      "name -> " (:name cookie)
+                                      ", value -> " (:value cookie)
+                                      ", domain -> " (:domain cookie)
+                                      ", path -> " (:path cookie)
+                                      ", secure -> " (:secure cookie))))
   (print-to-output ctx printer "")
   (print-to-output ctx printer "-------------------------------------------------")
   (print-to-output ctx printer ""))
@@ -39,6 +46,12 @@
   (print-to-output ctx printer "-------------------------------------------------")
   (print-to-output ctx printer ""))
 
+(defn get-domain-from-url [url]
+  (let [match (re-matches #"(?:[^:/]*:)?([^.]*\.[^.]*\.|[^/]*).*" (clojure.string/reverse url))]
+    (if (nil? match)
+      "can-not-extract-domain"
+      (clojure.string/reverse (second match)))))
+
 (defn interate-urls-to-take-screenshots
   ([l cfg script-name build-number env ctx home-dir printer]
    (interate-urls-to-take-screenshots l cfg script-name build-number env ctx home-dir printer :success))
@@ -50,6 +63,18 @@
            url-for-dir (util/replace-special-chars-in-url url)
            paths (get (val (first l)) "paths")
            paths-as-string (s/join "," paths)
+           cookie (get (val (first l)) "cookie")
+           is-cookie-set (not (nil? cookie))
+           cookie-name (or (get cookie "name") "")
+           cookie-value (or (get cookie "value") "")
+           cookie-secure (or (get cookie "secure") false)
+           cookie-domain (get-domain-from-url url)
+           cookie-path (str "/" (or (get cookie "path") ""))
+           cookie-wtih-defaults {:name cookie-name
+                                 :value cookie-value
+                                 :domain cookie-domain
+                                 :path cookie-path
+                                 :secure cookie-secure}
            resolutions (or (get cfg "resolutions") 1200)
            resolutions-as-string (s/join "," resolutions)
            async-wait (or (get cfg "async-wait") 5)
@@ -60,7 +85,7 @@
            invalid-paths-list (check-status-code url paths)]
        (if (empty? invalid-paths-list)
          (do
-           (take-screenshots-output ctx printer url paths-as-string resolutions-as-string)
+           (take-screenshots-output ctx printer url paths-as-string resolutions-as-string is-cookie-set cookie-wtih-defaults)
            (recur (rest l)
                   cfg
                   script-name
@@ -72,7 +97,7 @@
                   (:status (shell/bash
                              ctx
                              home-dir
-                             (strint/<< "ruby lineup/~{script-name} \"~{url}\" \"~{resolutions-as-string}\" \"~{paths-as-string}\" \"~{dir}\" \"~{browser-as-bool}\" \"~{async-wait-as-string}\"")))))
+                             (strint/<< "ruby lineup/~{script-name} \"~{url}\" \"~{resolutions-as-string}\" \"~{paths-as-string}\" \"~{dir}\" \"~{browser-as-bool}\" \"~{async-wait-as-string}\" \"~{is-cookie-set}\" \"~{cookie-name}\" \"~{cookie-value}\" \"~{cookie-domain}\" \"~{cookie-path}\" \"~{cookie-secure}\"")))))
          (do
            (invalid-status-code-output ctx printer url paths-as-string invalid-paths-list)
            {:status :failure}))))))

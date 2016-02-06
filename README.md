@@ -53,7 +53,17 @@ The LambdaCD-Artifacts plugin needs this path to serve your screenshots.
       "max-diff": 2,
       "env-mapping": {
         "live": "www"
+      },
+      "cookie": {
+        "name" : "enableAwesomeFeature",
+        "value" : "true"
       }
+    },
+    "http://#env#.ottogroup.com" : {
+      "paths": [
+        "de"
+      ],
+      "max-diff": 2
     }
   },
   "browser": "firefox",
@@ -67,8 +77,15 @@ The LambdaCD-Artifacts plugin needs this path to serve your screenshots.
 * urls: Map of urls on configs (no default)
   * Key: URL without path (no defualt). A placehoder #env# can be used to inject a environment.
   * Value:
-    * paths: Path to subsites. URL + "/" + paths = otto.de/sport, otto.de/media (default: "")
+    * paths: Path to subsites. URL + "/" + paths = otto.de/sport, otto.de/media (default: "/")
     * max-diff: max difference between two screenshots (before and after)
+    * env-mapping: This mapping will replace the environment (argument of take-screenshots and analyse-comparison) with the corresponding value in this map.
+                   Example: You call analyse-comparison live but in one url you need the string wwww
+    * cookie: Set a cookie for this url
+      * name: Name of the cookie
+      * value: Value of the cookie
+      * path: Path of this cookie (optional, default: "/")
+      * secure: Boolean. Only send cookie if you use https (optional, default: false)
 * resolution: Width of the screenshots (default: 1200)
 * browser: "firefox" or "phantomjs" (default: :firefox)
 * async-wait: Time to wait in seconds between rendering the page and taking the screenshots. Useful to load resources (fonts,...) asynchronously (default: 5)

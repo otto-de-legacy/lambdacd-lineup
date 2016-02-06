@@ -77,6 +77,51 @@
               (or (nil? s)
                   (and (number? s) (or (integer? s) (float? s)))))
 
+(defvalidator is-boolean?
+              {:default-message-format "%s must be a boolean"}
+              [s]
+              (or (nil? s)
+                  (= false s)
+                  (= true s)))
+
+(defvalidator cookie-name-is-valid?
+              {:default-message-format "name must not be empty"}
+              [s]
+              (let [name (get s "name")]
+                (or (nil? s)
+                    (and (not (nil? name))
+                         (string? name)
+                         (not-empty name)))))
+
+(defvalidator cookie-value-is-valid?
+              {:default-message-format "value must not be empty"}
+              [s]
+              (let [value (get s "value")]
+                (or (nil? s)
+                    (and (not (nil? value))
+                         (string? value)
+                         (not-empty value)))))
+
+(defvalidator cookie-path-is-valid?
+              {:default-message-format "path must not be empty"}
+              [s]
+              (let [path (get s "path")]
+                (or (nil? s)
+                    (nil? path)
+                    (and (string? path)
+                         (not-empty path)
+                         (or (= "/" path)
+                             (nil? (re-find #"^/.*$" path)))))))
+
+(defvalidator cookie-secure-is-valid?
+              {:default-message-format "secure must be a boolean"}
+              [s]
+              (let [secure (get s "secure")]
+                (or (nil? s)
+                    (or (nil? secure)
+                        (= false secure)
+                        (= true secure)))))
+
 (defvalidator is-firefox-or-phantomjs?
               {:default-message-format "%s must be \"firefox\" or \"phantomjs\""}
               [s]
@@ -92,6 +137,7 @@
                                               [v/every #(http-or-https? (key %))]
                                               [v/every #(without-trailing-slash? (key %))]
                                               [v/every #(b/valid? (val %) "env-mapping" [is-map? no-duplicate-entries-in-map?])]
+                                              [v/every #(b/valid? (val %) "cookie" [is-map? no-duplicate-entries-in-map? cookie-name-is-valid? cookie-value-is-valid? cookie-path-is-valid? cookie-secure-is-valid?])]
                                               [v/every #(b/valid? (val %) "max-diff" [v/required is-positive? is-float?])]
                                               [v/every #(b/valid? (val %) "paths" [[v/every without-leading-slash?]])]
                                               [v/every #(b/valid? (val %) "paths" [[v/every not-empty?]])]
