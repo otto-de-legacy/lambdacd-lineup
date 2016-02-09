@@ -63,8 +63,21 @@
   (testing "env-mapping: valid"
     (let [cfg {"urls" {"http://otto.de" {"paths" ["/", "sport"] "max-diff" 5 "env-mapping" {"live" "www"}}}}]
       (is (first (validate cfg)))))
+  (testing "env-mapping: valid two mappings"
+    (let [cfg {"urls" {"http://otto.de" {"paths" ["/", "sport"] "max-diff" 5 "env-mapping" {"live" "www"
+                                                                                            "develop" "dev"}}}}]
+      (is (first (validate cfg)))))
   (testing "env-mapping: invalid vector"
     (let [cfg {"urls" {"http://otto.de" {"paths" ["/", "sport"] "max-diff" 5 "env-mapping" ["live" "www"]}}}]
+      (is (not (first (validate cfg))))))
+  (testing "env-mapping: key must be a string"
+    (let [cfg {"urls" {"http://otto.de" {"paths" ["/", "sport"] "max-diff" 5 "env-mapping" {:live "www"}}}}]
+      (is (not (first (validate cfg))))))
+  (testing "env-mapping: key must not be empty"
+    (let [cfg {"urls" {"http://otto.de" {"paths" ["/", "sport"] "max-diff" 5 "env-mapping" {"" "www"}}}}]
+      (is (not (first (validate cfg))))))
+  (testing "env-mapping: value must be a string"
+    (let [cfg {"urls" {"http://otto.de" {"paths" ["/", "sport"] "max-diff" 5 "env-mapping" {"live" :www}}}}]
       (is (not (first (validate cfg))))))
 
   (testing "cookie: valid map"
