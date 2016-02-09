@@ -61,7 +61,7 @@
      (let [env-mapping (get (val (first l)) "env-mapping")
            url (util/replace-env-in-url (key (first l)) env env-mapping)
            url-for-dir (util/replace-special-chars-in-url url)
-           paths (get (val (first l)) "paths")
+           paths (or (get (val (first l)) "paths") "/")
            paths-as-string (s/join "," paths)
            cookie (get (val (first l)) "cookie")
            is-cookie-set (not (nil? cookie))
