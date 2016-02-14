@@ -1,4 +1,4 @@
-(defproject lambdacd-lineup "0.3.3"
+(defproject lambdacd-lineup "0.4.0"
   :description "LambdaCD library to integrate Lineup"
   :url "https://github.com/otto-de/lambdacd-lineup"
   :license {:name "The MIT License (MIT)"
