@@ -8,14 +8,13 @@ lineup.difference_path(ARGV[3])
 lineup.use_phantomjs(ARGV[4] == "true")
 lineup.wait_for_asynchron_pages(ARGV[5].to_i)
 
-if ARGV[6] == "true"
-cookie =  {"name" => ARGV[7],
-           "value" => ARGV[8],
-           "domain" => ARGV[9],
-           "path" => ARGV[10],
-           "secure" => ARGV[11] == "true"}
-lineup.cookie_for_experiment(cookie)
+cookies = JSON.parse(ARGV[6])
+cookies_with_symbol_keys = []
+cookies.each do |cookie|
+    cookies_with_symbol_keys.push(cookie.inject({}) { |element, (symbol, value)| element[symbol.to_sym] = value; element })
 end
+
+lineup.cookies(cookies_with_symbol_keys)
 
 lineup.record_screenshot('after')
 

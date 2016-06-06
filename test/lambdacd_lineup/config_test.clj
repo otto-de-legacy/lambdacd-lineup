@@ -80,78 +80,93 @@
     (let [cfg {"urls" {"http://otto.de" {"paths" ["/", "sport"] "max-diff" 5 "env-mapping" {"live" :www}}}}]
       (is (not (first (validate cfg))))))
 
-  (testing "cookie: valid map"
-    (let [cfg {"urls"    {"http://otto.de" {"paths" ["/"]
-                                            "max-diff" 5
-                                            "cookie" {"name" "myCookieName"
-                                                      "value" "myCookieValue"
-                                                      "secure" true}}}}]
+  (testing "cookies: valid map"
+    (let [cfg {"urls" {"http://otto.de" {"paths"    ["/"]
+                                         "max-diff" 5
+                                         "cookies"  [{"name"   "myCookieName"
+                                                      "value"  "myCookieValue"
+                                                      "secure" true}]}}}]
       (is (first (validate cfg)))))
-  (testing "cookie: cookie must be a map"
-    (let [cfg {"urls"    {"http://otto.de" {"paths" ["/"]
-                                            "max-diff" 5
-                                            "cookie" ["name" "myCookieName"
-                                                      "value" "myCookieValue"]}}}]
+  (testing "cookies: cookie must be a vector"
+    (let [cfg {"urls" {"http://otto.de" {"paths"    ["/"]
+                                         "max-diff" 5
+                                         "cookies"  {"name"  "myCookieName"
+                                                     "value" "myCookieValue"}}}}]
       (is (not (first (validate cfg))))))
-  (testing "cookie: name is required"
-    (let [cfg {"urls"    {"http://otto.de" {"paths" ["/"]
-                                            "max-diff" 5
-                                            "cookie" {"value" "myCookieValue"}}}}]
+  (testing "cookies: all cookies must be verified"
+    (let [cfg {"urls" {"http://otto.de" {"paths"    ["/"]
+                                         "max-diff" 5
+                                         "cookies"  [{"name"  "myCookieName"
+                                                      "value" "myCookieValue"}
+                                                     {"name" "myCookieName"}]}}}]
       (is (not (first (validate cfg))))))
-  (testing "cookie: value is required"
-    (let [cfg {"urls"    {"http://otto.de" {"paths" ["/"]
-                                            "max-diff" 5
-                                            "cookie" {"name" "myCookieName"}}}}]
-      (is (not (first (validate cfg))))))
-  (testing "cookie: name must be a string"
-    (let [cfg {"urls"    {"http://otto.de" {"paths" ["/"]
-                                            "max-diff" 5
-                                            "cookie" {"name" :myCookieName "value" "myCookieValue"}}}}]
-      (is (not (first (validate cfg))))))
-  (testing "cookie: value must be a string"
-    (let [cfg {"urls"    {"http://otto.de" {"paths" ["/"]
-                                            "max-diff" 5
-                                            "cookie" {"name" "myCookieName" "value" :myCookieValue}}}}]
-      (is (not (first (validate cfg))))))
-  (testing "cookie: name must not be empty"
-    (let [cfg {"urls"    {"http://otto.de" {"paths" ["/"]
-                                            "max-diff" 5
-                                            "cookie" {"name" "" "value" "myCookieValue"}}}}]
-      (is (not (first (validate cfg))))))
-  (testing "cookie: value must not be empty"
-    (let [cfg {"urls"    {"http://otto.de" {"paths" ["/"]
-                                            "max-diff" 5
-                                            "cookie" {"name" "myCookieName" "value" ""}}}}]
-      (is (not (first (validate cfg))))))
-  (testing "cookie: path must be a string"
-    (let [cfg {"urls"    {"http://otto.de" {"paths" ["/"]
-                                            "max-diff" 5
-                                            "cookie" {"name" "myCookieName" "value" "myCookieValue" "path" :mypath}}}}]
-      (is (not (first (validate cfg))))))
-  (testing "cookie: valid root path"
-    (let [cfg {"urls"    {"http://otto.de" {"paths" ["/"]
-                                            "max-diff" 5
-                                            "cookie" {"name" "myCookieName" "value" "myCookieValue" "path" "/"}}}}]
+  (testing "cookies: two valid cookies"
+    (let [cfg {"urls" {"http://otto.de" {"paths"    ["/"]
+                                         "max-diff" 5
+                                         "cookies"  [{"name"  "myCookieName"
+                                                      "value" "myCookieValue"}
+                                                     {"name"  "myCookieName"
+                                                      "value" "myCookieValue"}]}}}]
       (is (first (validate cfg)))))
-  (testing "cookie: valid path"
-    (let [cfg {"urls"    {"http://otto.de" {"paths" ["/"]
-                                            "max-diff" 5
-                                            "cookie" {"name" "myCookieName" "value" "myCookieValue" "path" "subpath"}}}}]
+  (testing "cookies: name is required"
+    (let [cfg {"urls" {"http://otto.de" {"paths"    ["/"]
+                                         "max-diff" 5
+                                         "cookies"  [{"value" "myCookieValue"}]}}}]
+      (is (not (first (validate cfg))))))
+  (testing "cookies: value is required"
+    (let [cfg {"urls" {"http://otto.de" {"paths"    ["/"]
+                                         "max-diff" 5
+                                         "cookies"  [{"name" "myCookieName"}]}}}]
+      (is (not (first (validate cfg))))))
+  (testing "cookies: name must be a string"
+    (let [cfg {"urls" {"http://otto.de" {"paths"    ["/"]
+                                         "max-diff" 5
+                                         "cookies"  [{"name" 123 "value" "myCookieValue"}]}}}]
+      (is (not (first (validate cfg))))))
+  (testing "cookies: value must be a string"
+    (let [cfg {"urls" {"http://otto.de" {"paths"    ["/"]
+                                         "max-diff" 5
+                                         "cookies"  [{"name" "myCookieName" "value" 123}]}}}]
+      (is (not (first (validate cfg))))))
+  (testing "cookies: name must not be empty"
+    (let [cfg {"urls" {"http://otto.de" {"paths"    ["/"]
+                                         "max-diff" 5
+                                         "cookies"  [{"name" "" "value" "myCookieValue"}]}}}]
+      (is (not (first (validate cfg))))))
+  (testing "cookies: value must not be empty"
+    (let [cfg {"urls" {"http://otto.de" {"paths"    ["/"]
+                                         "max-diff" 5
+                                         "cookies"  [{"name" "myCookieName" "value" ""}]}}}]
+      (is (not (first (validate cfg))))))
+  (testing "cookies: path must be a string"
+    (let [cfg {"urls" {"http://otto.de" {"paths"    ["/"]
+                                         "max-diff" 5
+                                         "cookies"  [{"name" "myCookieName" "value" "myCookieValue" "path" 123}]}}}]
+      (is (not (first (validate cfg))))))
+  (testing "cookies: valid root path"
+    (let [cfg {"urls" {"http://otto.de" {"paths"    ["/"]
+                                         "max-diff" 5
+                                         "cookies"  [{"name" "myCookieName" "value" "myCookieValue" "path" "/"}]}}}]
       (is (first (validate cfg)))))
-  (testing "cookie: invalid path. it starts with a slash"
-    (let [cfg {"urls"    {"http://otto.de" {"paths" ["/"]
-                                            "max-diff" 5
-                                            "cookie" {"name" "myCookieName" "value" "myCookieValue" "path" "/subpath"}}}}]
+  (testing "cookies: valid path"
+    (let [cfg {"urls" {"http://otto.de" {"paths"    ["/"]
+                                         "max-diff" 5
+                                         "cookies"  [{"name" "myCookieName" "value" "myCookieValue" "path" "subpath"}]}}}]
+      (is (first (validate cfg)))))
+  (testing "cookies: invalid path. it starts with a slash"
+    (let [cfg {"urls" {"http://otto.de" {"paths"    ["/"]
+                                         "max-diff" 5
+                                         "cookies"  [{"name" "myCookieName" "value" "myCookieValue" "path" "/subpath"}]}}}]
       (is (not (first (validate cfg))))))
-  (testing "cookie: path must not be empty"
-    (let [cfg {"urls"    {"http://otto.de" {"paths" ["/"]
-                                            "max-diff" 5
-                                            "cookie" {"name" "myCookieName" "value" "myCookieValue" "path" ""}}}}]
+  (testing "cookies: path must not be empty"
+    (let [cfg {"urls" {"http://otto.de" {"paths"    ["/"]
+                                         "max-diff" 5
+                                         "cookies"  [{"name" "myCookieName" "value" "myCookieValue" "path" ""}]}}}]
       (is (not (first (validate cfg))))))
-  (testing "cookie: secure must be a boolean"
-    (let [cfg {"urls"    {"http://otto.de" {"paths" ["/"]
-                                            "max-diff" 5
-                                            "cookie" {"name" "myCookieName" "value" "myCookieValue" "secure" :true}}}}]
+  (testing "cookies: secure must be a boolean"
+    (let [cfg {"urls" {"http://otto.de" {"paths"    ["/"]
+                                         "max-diff" 5
+                                         "cookies"  [{"name" "myCookieName" "value" "myCookieValue" "secure" "true"}]}}}]
       (is (not (first (validate cfg))))))
 
   (testing "max-diff: valid value"
