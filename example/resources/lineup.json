@@ -6,15 +6,21 @@
         "multimedia"
       ],
       "max-diff": 2,
-      "cookies": [{
-        "name" : "enableAwesomeFeature",
-        "value" : "true"
-      }],
+      "cookies": [
+        {
+          "name": "enableAwesomeFeature1",
+          "value": "true"
+        },
+        {
+          "name": "enableAwesomeFeature2",
+          "value": "false"
+        }
+      ],
       "env-mapping": {
         "live": "www"
       }
     },
-    "http://#env#.ottogroup.com" : {
+    "http://#env#.ottogroup.com": {
       "paths": [
         "de"
       ],

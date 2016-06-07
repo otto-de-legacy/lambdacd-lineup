@@ -54,10 +54,16 @@ The LambdaCD-Artifacts plugin needs this path to serve your screenshots.
       "env-mapping": {
         "live": "www"
       },
-      "cookie": {
-        "name" : "enableAwesomeFeature",
-        "value" : "true"
-      }
+      "cookies": [
+        {
+          "name": "enableAwesomeFeature1",
+          "value": "true"
+        },
+        {
+          "name": "enableAwesomeFeature2",
+          "value": "false"
+        }
+      ],
     },
     "http://#env#.ottogroup.com" : {
       "paths": [
@@ -81,7 +87,7 @@ The LambdaCD-Artifacts plugin needs this path to serve your screenshots.
     * max-diff: max difference between two screenshots (before and after)
     * env-mapping: This mapping will replace the environment (argument of take-screenshots and analyse-comparison) with the corresponding value in this map.
                    Example: You call analyse-comparison live but in one url you need the string wwww
-    * cookie: Set a cookie for this url
+    * cookies: Set cookie for this url
       * name: Name of the cookie
       * value: Value of the cookie
       * path: Path of this cookie (optional, default: "/")
