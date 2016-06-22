@@ -64,6 +64,10 @@ The LambdaCD-Artifacts plugin needs this path to serve your screenshots.
           "value": "false"
         }
       ],
+      "resolutions": [
+        800,
+        1200
+      ]
     },
     "http://#env#.ottogroup.com" : {
       "paths": [
@@ -92,7 +96,8 @@ The LambdaCD-Artifacts plugin needs this path to serve your screenshots.
       * value: Value of the cookie
       * path: Path of this cookie (optional, default: "/")
       * secure: Boolean. Only send cookie if you use https (optional, default: false)
-* resolution: Width of the screenshots (default: 1200)
+      * resolutions: Width of the screenshots for this URL (overrules outer resolutions in config)
+* resolutions: Width of the screenshots (default: 1200)
 * browser: "firefox" or "phantomjs" (default: :firefox)
 * async-wait: Time to wait in seconds between rendering the page and taking the screenshots. Useful to load resources (fonts,...) asynchronously (default: 5)
 
