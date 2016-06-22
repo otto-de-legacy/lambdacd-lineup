@@ -1,4 +1,4 @@
-(ns lambdacd-lineup.config-test
+ (ns lambdacd-lineup.config-test
   (:require [clojure.test :refer :all]
             [lambdacd-lineup.config :refer :all]))
 
@@ -211,6 +211,31 @@
       (is (not (first (validate cfg))))))
   (testing "resolutions: same resolution twice is invalid"
     (let [cfg {"urls" {"http://otto.de" {"paths" ["/"] "max-diff" 5}} "resolutions" [800, 1200, 800]}]
+      (is (not (first (validate cfg))))))
+
+  (testing "urls.resolutions: valid empty vector"
+    (let [cfg {"urls" {"http://otto.de" {"paths" ["/"] "max-diff" 5 "resolutions" []}}}]
+      (is (first (validate cfg)))))
+  (testing "urls.resolutions: valid vector with two resolutions"
+    (let [cfg {"urls" {"http://otto.de" {"paths" ["/"] "max-diff" 5  "resolutions" [800, 1200]}}}]
+      (is (first (validate cfg)))))
+  (testing "urls.resolutions: only a string is invalid"
+    (let [cfg {"urls" {"http://otto.de" {"paths" ["/"] "max-diff" 5 "resolutions" "1200"}}}]
+      (is (not (first (validate cfg))))))
+  (testing "urls.resolutions: vector with string is invalid"
+    (let [cfg {"urls" {"http://otto.de" {"paths" ["/"] "max-diff" 5 "resolutions" ["1200"]}}}]
+      (is (not (first (validate cfg))))))
+  (testing "urls.resolutions: vector with a number and a string is invalid"
+    (let [cfg {"urls" {"http://otto.de" {"paths" ["/"] "max-diff" 5 "resolutions" [800, "1200"]}}}]
+      (is (not (first (validate cfg))))))
+  (testing "urls.resolutions: only a number invalid"
+    (let [cfg {"urls" {"http://otto.de" {"paths" ["/"] "max-diff" 5 "resolutions" 1200}}}]
+      (is (not (first (validate cfg))))))
+  (testing "urls.resolutions: a list is invalid"
+    (let [cfg {"urls" {"http://otto.de" {"paths" ["/"] "max-diff" 5 "resolutions" '(1200)}}}]
+      (is (not (first (validate cfg))))))
+  (testing "urls.resolutions: same resolution twice is invalid"
+    (let [cfg {"urls" {"http://otto.de" {"paths" ["/"] "max-diff" 5 "resolutions" [800, 1200, 800]}}}]
       (is (not (first (validate cfg))))))
 
   (testing "browser: valid firefox"
