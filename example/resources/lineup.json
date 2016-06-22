@@ -18,7 +18,10 @@
       ],
       "env-mapping": {
         "live": "www"
-      }
+      },
+      "resolutions": [
+        970
+      ]
     },
     "http://#env#.ottogroup.com": {
       "paths": [

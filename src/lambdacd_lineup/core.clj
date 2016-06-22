@@ -54,43 +54,49 @@
    :domain (get-domain-from-url url)
    })
 
+
+(defn take-screenshot [ctx home-dir script url resolutions paths dir phantomjs? async-wait cookies]
+  (shell/bash
+    ctx
+    home-dir
+    (strint/<< "ruby lineup/~{script} \"~{url}\" \"~{resolutions}\" \"~{paths}\" \"~{dir}\" \"~{phantomjs?}\" \"~{async-wait}\" '~{cookies}'"))
+  )
+
 (defn interate-urls-to-take-screenshots
-  ([l cfg script-name build-number env ctx home-dir printer]
-   (interate-urls-to-take-screenshots l cfg script-name build-number env ctx home-dir printer :success))
-  ([l cfg script-name build-number env ctx home-dir printer status]
-   (if (or (empty? l) (= :failure status))
+  ([lineup-cfg script-name build-number env ctx home-dir printer]
+   (interate-urls-to-take-screenshots (get lineup-cfg "urls") lineup-cfg script-name build-number env ctx home-dir printer :success))
+  ([urls lineup-cfg script-name build-number env ctx home-dir printer status]
+
+   (if (or (empty? urls) (= :failure status))
      {:status status}
-     (let [env-mapping (get (val (first l)) "env-mapping")
-           url (util/replace-env-in-url (key (first l)) env env-mapping)
+     (let [url-configuration (val (first urls))
+           env-mapping (get url-configuration "env-mapping")
+           url (util/replace-env-in-url (key (first urls)) env env-mapping)
            url-for-dir (util/replace-special-chars-in-url url)
-           paths (or (get (val (first l)) "paths") "/")
+           paths (or (get url-configuration "paths") "/")
            paths-as-string (s/join "," paths)
-           cookies (or (get (val (first l)) "cookies") [])
+           cookies (or (get url-configuration "cookies") [])
            cookies-with-defaults (map (partial set-cookie-defaults url) cookies)
            cookies-as-json (cheshire/generate-string cookies-with-defaults)
-           resolutions (or (get cfg "resolutions") 1200)
+           resolutions (or (get url-configuration "resolutions") (get lineup-cfg "resolutions") [(str 1200)])
            resolutions-as-string (s/join "," resolutions)
-           async-wait (or (get cfg "async-wait") 5)
-           async-wait-as-string (str async-wait)
-           browser (or (get cfg "browser") "firefox")
-           browser-as-bool (= "phantomjs" browser)
+           async-wait (str (or (get lineup-cfg "async-wait") 5))
+           browser (or (get lineup-cfg "browser") "firefox")
+           phantomjs? (= "phantomjs" browser)
            dir (str home-dir "/screenshots/" build-number "-" url-for-dir)
            invalid-paths-list (check-status-code url paths)]
        (if (empty? invalid-paths-list)
          (do
            (take-screenshots-output ctx printer url paths-as-string resolutions-as-string cookies-as-json)
-           (recur (rest l)
-                  cfg
+           (recur (rest urls)
+                  lineup-cfg
                   script-name
                   build-number
                   env
                   ctx
                   home-dir
                   printer
-                  (:status (shell/bash
-                             ctx
-                             home-dir
-                             (strint/<< "ruby lineup/~{script-name} \"~{url}\" \"~{resolutions-as-string}\" \"~{paths-as-string}\" \"~{dir}\" \"~{browser-as-bool}\" \"~{async-wait-as-string}\" '~{cookies-as-json}'")))))
+                  (:status (take-screenshot ctx home-dir script-name url resolutions-as-string paths-as-string dir phantomjs? async-wait cookies-as-json))))
          (do
            (invalid-status-code-output ctx printer url paths-as-string invalid-paths-list)
            {:status :failure}))))))
@@ -106,11 +112,9 @@
         (do
           (validation-output ctx printer validation-result)
           {:status :failure})
-        (let [lineup-folder (io/ensure-dir home-dir "lineup")
-              urls (get lineup-cfg "urls")]
+        (let [lineup-folder (io/ensure-dir home-dir "lineup")]
           (io/copy-to lineup-folder script-name)
-          (interate-urls-to-take-screenshots urls
-                                             lineup-cfg
+          (interate-urls-to-take-screenshots lineup-cfg
                                              script-name
                                              build-number
                                              env

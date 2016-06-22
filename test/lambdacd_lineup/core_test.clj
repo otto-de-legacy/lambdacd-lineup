@@ -1,7 +1,8 @@
 (ns lambdacd-lineup.core-test
   (:require [clojure.test :refer :all]
             [lambdacd-lineup.core :refer :all]
-            [clj-http.fake :as clj-http-fake]))
+            [clj-http.fake :as clj-http-fake]
+            [lambdacd.steps.shell :as shell]))
 
 (deftest check-status-code-for-one-url-test
   (testing "valid url damenmode"
@@ -65,3 +66,37 @@
     (is (= {:status :failure} (calc-new-status {:status :failure} 1 2))))
   (testing "success -> success"
     (is (= {:status :success} (calc-new-status {:status :success} 1 2)))))
+
+(deftest iterate-over-urls-test
+  (let [last-resolution (atom nil)
+        script-name "wurst"
+        buildno 1
+        env "live"
+        ctx {}
+        home-dir "home"
+        printer nil
+        ]
+    (with-redefs [take-screenshots-output (fn [& _] nil)
+                  take-screenshot (fn [_ _ _ _ resolutions _ _ _ _ _] (reset! last-resolution resolutions))]
+      (testing "should use fallback if no resolution is set"
+        (let [cfg {"urls" {"http://otto.de" {"paths" ["/"] "max-diff" 5}}}]
+          (interate-urls-to-take-screenshots cfg script-name buildno env ctx home-dir printer)
+          (is (= @last-resolution "1200")))
+        )
+      (testing "should use outer resolutions if no inner is given"
+        (let [cfg {"urls" {"http://otto.de" {"paths" ["/"] "max-diff" 5}} "resolutions" [800 900]}]
+          (interate-urls-to-take-screenshots cfg script-name buildno env ctx home-dir printer)
+          (is (= @last-resolution "800,900")))
+        )
+
+      (testing "should use inner resolutions if no outer is given"
+        (let [cfg {"urls" {"http://otto.de" {"paths" ["/"] "max-diff" 5 "resolutions" [800 900]}}}]
+          (interate-urls-to-take-screenshots cfg script-name buildno env ctx home-dir printer)
+          (is (= @last-resolution "800,900")))
+        )
+
+      (testing "should prefer inner resolutions over outer resolutions"
+        (let [cfg {"urls" {"http://otto.de" {"paths" ["/"] "max-diff" 5 "resolutions" [800 900]}} "resolutions" [10]}]
+          (interate-urls-to-take-screenshots cfg script-name buildno env ctx home-dir printer)
+          (is (= @last-resolution "800,900")))
+        ))))
