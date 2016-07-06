@@ -10,7 +10,7 @@ LambdaCD-Lineup is just a wrapper to integrate this tool in LambdaCD.
 ## Requirements
 * Ruby
 * PhantomJS or headless Firefox
-* [Lineup](https://github.com/otto-de/lineup)
+* [Lineup](https://github.com/otto-de/lineup) >= 0.7.0
 
 Both must exist in any directory in your $PATH.
 ## Usage

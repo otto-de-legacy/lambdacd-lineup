@@ -77,7 +77,7 @@
         printer nil
         ]
     (with-redefs [take-screenshots-output (fn [& _] nil)
-                  take-screenshot (fn [_ _ _ _ resolutions _ _ _ _ _] (reset! last-resolution resolutions))]
+                  take-screenshot (fn [_ _ _ _ resolutions _ _ _ _ _ _] (reset! last-resolution resolutions))]
       (testing "should use fallback if no resolution is set"
         (let [cfg {"urls" {"http://otto.de" {"paths" ["/"] "max-diff" 5}}}]
           (interate-urls-to-take-screenshots cfg script-name buildno env ctx home-dir printer)

@@ -113,6 +113,13 @@
                                          "max-diff" 5
                                          "cookies"  [{"value" "myCookieValue"}]}}}]
       (is (not (first (validate cfg))))))
+
+  (testing "cookies: vector can be empty"
+    (let [cfg {"urls" {"http://otto.de" {"paths"    ["/"]
+                                         "max-diff" 5
+                                         "cookies"  []}}}]
+      (is (first (validate cfg)))))
+
   (testing "cookies: value is required"
     (let [cfg {"urls" {"http://otto.de" {"paths"    ["/"]
                                          "max-diff" 5
@@ -168,6 +175,54 @@
                                          "max-diff" 5
                                          "cookies"  [{"name" "myCookieName" "value" "myCookieValue" "secure" "true"}]}}}]
       (is (not (first (validate cfg))))))
+
+  (testing "local-storage: valid map"
+    (let [cfg {"urls" {"http://otto.de" {"paths"    ["/"]
+                                         "max-diff" 5
+                                         "local-storage"  {"key" "value"}}}}]
+      (is (first (validate cfg)))))
+  (testing "local-storage: two valid entries"
+    (let [cfg {"urls" {"http://otto.de" {"paths"    ["/"]
+                                         "max-diff" 5
+                                         "local-storage" {"key1" "value1" "key2" "value2"}}}}]
+      (is (first (validate cfg)))))
+
+  (testing "local-storage: must be a map"
+    (let [cfg {"urls" {"http://otto.de" {"paths"    ["/"]
+                                         "max-diff" 5
+                                         "local-storage" ["value1"]}}}]
+      (is (not (first (validate cfg))))))
+  (testing "local-storage: map can be empty"
+    (let [cfg {"urls" {"http://otto.de" {"paths"    ["/"]
+                                         "max-diff" 5
+                                         "local-storage"  {}}}}]
+      (is (first (validate cfg)))))
+  (testing "local-storage: all entries must be verified"
+    (let [cfg {"urls" {"http://otto.de" {"paths"    ["/"]
+                                         "max-diff" 5
+                                         "local-storage" {"key1" "value1" "key" 100}}}}]
+      (is (not (first (validate cfg))))))
+
+  (testing "local-storage: key must be a string"
+    (let [cfg {"urls" {"http://otto.de" {"paths"    ["/"]
+                                         "max-diff" 5
+                                         "local-storage" {100 "value1"}}}}]
+      (is (not (first (validate cfg))))))
+  (testing "local-storage: key must not be empty"
+    (let [cfg {"urls" {"http://otto.de" {"paths"    ["/"]
+                                         "max-diff" 5
+                                         "local-storage" {"" "value1"}}}}]
+      (is (not (first (validate cfg))))))
+  (testing "local-storage: value must be a string"
+    (let [cfg {"urls" {"http://otto.de" {"paths"    ["/"]
+                                         "max-diff" 5
+                                         "local-storage" {"key" 100}}}}]
+      (is (not (first (validate cfg))))))
+  (testing "local-storage: value can be empty"
+    (let [cfg {"urls" {"http://otto.de" {"paths"    ["/"]
+                                         "max-diff" 5
+                                         "local-storage" {"key1" ""}}}}]
+      (is (first (validate cfg)))))
 
   (testing "max-diff: valid value"
     (let [cfg {"urls" {"http://otto.de" {"paths" ["/"] "max-diff" 5}}}]

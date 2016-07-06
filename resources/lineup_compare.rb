@@ -13,8 +13,10 @@ cookies_with_symbol_keys = []
 cookies.each do |cookie|
     cookies_with_symbol_keys.push(cookie.inject({}) { |element, (symbol, value)| element[symbol.to_sym] = value; element })
 end
-
 lineup.cookies(cookies_with_symbol_keys)
+
+localStorage = JSON.parse(ARGV[7])
+lineup.localStorage(localStorage)
 
 lineup.record_screenshot('after')
 

@@ -128,6 +128,23 @@
               (or (nil? s)
                   (contains? #{"firefox" "phantomjs"} s)))
 
+(defvalidator local-storage-key-is-valid?
+              {:default-message-format "local storage key must not be empty"}
+              [s]
+              (let [key (key s)]
+                (or (nil? s)
+                    (and (not (nil? key))
+                         (string? key)
+                         (not-empty key)))))
+
+(defvalidator local-storage-value-is-valid?
+              {:default-message-format "local storage value must not be empty"}
+              [s]
+              (let [value (val s)]
+                (or (nil? s)
+                    (and (not (nil? value))
+                         (string? value)))))
+
 (defn validate [cfg]
   (let [val-result (first (b/validate cfg
                                       "urls" [is-map?
@@ -145,6 +162,9 @@
                                               [v/every #(b/valid? (val %) "cookies" [[v/every cookie-value-is-valid?]])]
                                               [v/every #(b/valid? (val %) "cookies" [[v/every cookie-path-is-valid?]])]
                                               [v/every #(b/valid? (val %) "cookies" [[v/every cookie-secure-is-valid?]])]
+                                              [v/every #(b/valid? (val %) "local-storage" [is-map?])]
+                                              [v/every #(b/valid? (val %) "local-storage" [[v/every local-storage-key-is-valid?]])]
+                                              [v/every #(b/valid? (val %) "local-storage" [[v/every local-storage-value-is-valid?]])]
                                               [v/every #(b/valid? (val %) "max-diff" [v/required is-positive? is-float?])]
                                               [v/every #(b/valid? (val %) "paths" [[v/every without-leading-slash?]])]
                                               [v/every #(b/valid? (val %) "paths" [[v/every not-empty?]])]

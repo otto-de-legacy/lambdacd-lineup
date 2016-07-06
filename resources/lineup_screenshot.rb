@@ -15,4 +15,7 @@ end
 
 lineup.cookies(cookies_with_symbol_keys)
 
+localStorage = JSON.parse(ARGV[7])
+lineup.localStorage(localStorage)
+
 lineup.record_screenshot('before')

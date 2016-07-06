@@ -16,6 +16,10 @@
           "value": "false"
         }
       ],
+      "local-storage" : {
+        "someKey1" : "someValue1",
+        "someKey2" : "someValue2"
+      },
       "env-mapping": {
         "live": "www"
       },

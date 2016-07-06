@@ -23,11 +23,12 @@
               (concat old (check-status-code-for-one-url url-with-path)))
             [] urls-with-paths)))
 
-(defn take-screenshots-output [ctx printer url paths resolutions cookies]
+(defn take-screenshots-output [ctx printer url paths resolutions cookies localStorage]
   (print-to-output ctx printer (str "URL: " url))
   (print-to-output ctx printer (str "Paths: " paths))
   (print-to-output ctx printer (str "Resolutions: " resolutions))
   (print-to-output ctx printer (str "Cookies: " cookies))
+  (print-to-output ctx printer (str "LocalStorage: " localStorage))
   (print-to-output ctx printer "")
   (print-to-output ctx printer "-------------------------------------------------")
   (print-to-output ctx printer ""))
@@ -47,19 +48,19 @@
       (clojure.string/reverse (second match)))))
 
 (defn set-cookie-defaults [url cookie]
-  {:name (get cookie "name")
-   :value (get cookie "value")
+  {:name   (get cookie "name")
+   :value  (get cookie "value")
    :secure (or (get cookie "secure") false)
-   :path (str "/" (or (get cookie "path") ""))
+   :path   (str "/" (or (get cookie "path") ""))
    :domain (get-domain-from-url url)
    })
 
 
-(defn take-screenshot [ctx home-dir script url resolutions paths dir phantomjs? async-wait cookies]
+(defn take-screenshot [ctx home-dir script url resolutions paths dir phantomjs? async-wait cookies local-storage]
   (shell/bash
     ctx
     home-dir
-    (strint/<< "ruby lineup/~{script} \"~{url}\" \"~{resolutions}\" \"~{paths}\" \"~{dir}\" \"~{phantomjs?}\" \"~{async-wait}\" '~{cookies}'"))
+    (strint/<< "ruby lineup/~{script} \"~{url}\" \"~{resolutions}\" \"~{paths}\" \"~{dir}\" \"~{phantomjs?}\" \"~{async-wait}\" '~{cookies}' '~{local-storage}'"))
   )
 
 (defn interate-urls-to-take-screenshots
@@ -78,6 +79,8 @@
            cookies (or (get url-configuration "cookies") [])
            cookies-with-defaults (map (partial set-cookie-defaults url) cookies)
            cookies-as-json (cheshire/generate-string cookies-with-defaults)
+           local-storage (or (get url-configuration "local-storage") {})
+           local-storage-as-json (cheshire/generate-string local-storage)
            resolutions (or (get url-configuration "resolutions") (get lineup-cfg "resolutions") [(str 1200)])
            resolutions-as-string (s/join "," resolutions)
            async-wait (str (or (get lineup-cfg "async-wait") 5))
@@ -87,7 +90,7 @@
            invalid-paths-list (check-status-code url paths)]
        (if (empty? invalid-paths-list)
          (do
-           (take-screenshots-output ctx printer url paths-as-string resolutions-as-string cookies-as-json)
+           (take-screenshots-output ctx printer url paths-as-string resolutions-as-string cookies-as-json local-storage-as-json)
            (recur (rest urls)
                   lineup-cfg
                   script-name
@@ -96,7 +99,7 @@
                   ctx
                   home-dir
                   printer
-                  (:status (take-screenshot ctx home-dir script-name url resolutions-as-string paths-as-string dir phantomjs? async-wait cookies-as-json))))
+                  (:status (take-screenshot ctx home-dir script-name url resolutions-as-string paths-as-string dir phantomjs? async-wait cookies-as-json local-storage-as-json))))
          (do
            (invalid-status-code-output ctx printer url paths-as-string invalid-paths-list)
            {:status :failure}))))))
