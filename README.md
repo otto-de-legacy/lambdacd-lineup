@@ -159,6 +159,6 @@ You can see the screenshots if you click on this step:
 
 ## License
 
-Copyright © 2015 OTTO (GmbH & Co. KG)
+Copyright © 2016 OTTO (GmbH & Co. KG)
 
-Distributed under MIT License
+Distributed under [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0) license.

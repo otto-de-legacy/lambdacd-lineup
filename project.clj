@@ -1,8 +1,8 @@
 (defproject lambdacd-lineup "0.5.2"
   :description "LambdaCD library to integrate Lineup"
   :url "https://github.com/otto-de/lambdacd-lineup"
-  :license {:name "The MIT License (MIT)"
-            :url "http://opensource.org/licenses/MIT"}
+  :license {:name "Apache License 2.0"
+            :url "http://www.apache.org/licenses/LICENSE-2.0"}
   :scm {:name "git"
         :url "https://github.com/otto-de/lambdacd-lineup"}
   :test-paths ["test", "example"]
